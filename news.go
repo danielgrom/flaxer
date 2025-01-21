@@ -30,7 +30,7 @@ func getNews(app *Config) (string, error) {
 		app.HTTPClient = &http.Client{}
 	}
 	ret := ""
-	url := "https://danielgrom.github.io/flaxer/news.md"
+	url := "https://danielgrom.github.io/news/flaxernews.md"
 	req, _ := http.NewRequest("GET", url, nil)
 
 	resp, err := app.HTTPClient.Do(req)
