@@ -55,12 +55,27 @@ func (app *Config) CreateSettingsTab(settings repository.ProjectSettings) *fyne.
 func GetSavedFlaxerSettings(app *Config) *repository.FlaxerSettings {
 	settings, err := app.DB.GetFlaxerSettings()
 	if err != nil {
-		dialog.ShowError(err, app.MainWindow)
+		// Only show dialog if MainWindow is initialized
+		if app.MainWindow != nil {
+			dialog.ShowError(err, app.MainWindow)
+		}
+		// Return default settings on error
+		defaultSettings := &repository.FlaxerSettings{ID: 0, ProjectsDirectory: "", FlaxLocation: ""}
+		return defaultSettings
 	}
 
 	if settings == nil {
-		settings := repository.FlaxerSettings{ID: 0, ProjectsDirectory: "", FlaxLocation: ""}
-		app.DB.InsertFlaxerSettings(settings)
+		// No settings found in database - create default settings
+		defaultSettings := &repository.FlaxerSettings{ID: 0, ProjectsDirectory: "", FlaxLocation: ""}
+		savedSettings, err := app.DB.InsertFlaxerSettings(*defaultSettings)
+		if err != nil {
+			// If insert fails, just return the default settings
+			if app.MainWindow != nil {
+				dialog.ShowError(err, app.MainWindow)
+			}
+			return defaultSettings
+		}
+		return savedSettings
 	}
 	return settings
 }

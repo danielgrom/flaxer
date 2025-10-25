@@ -44,6 +44,11 @@ func (repo *SQLiteRepository) GetFlaxerSettings() (*FlaxerSettings, error) {
 	var h FlaxerSettings
 	err := row.Scan(&h.ID, &h.ProjectsDirectory, &h.FlaxLocation)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			// No settings found - this is normal for a fresh installation
+			return nil, nil
+		}
+		// Actual database error
 		return nil, err
 	}
 	return &h, nil
