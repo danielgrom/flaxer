@@ -66,13 +66,20 @@ func (app *Config) CreateProjectsTab() *fyne.Container {
 			pname,
 			func(b bool) {
 				if b {
-					newProjectParams := " -new -project " + app.Settings.ProjectsDirectory + "/" + pname.Text
 					projectFile := app.Settings.ProjectsDirectory + "/" + pname.Text + "/" + pname.Text + ".flaxproj"
 					println(projectFile)
 					if !doesFileExist(projectFile) {
-						cmd := exec.Command(app.Settings.FlaxLocation, newProjectParams)
+						// Check if FlaxLocation is set
+						if app.Settings.FlaxLocation == "" {
+							dialog.ShowInformation("Error", "Flax executable location not set. Please configure it in Settings.", app.MainWindow)
+							return
+						}
+						// Properly split arguments for exec.Command
+						cmd := exec.Command(app.Settings.FlaxLocation, "-new", "-project", app.Settings.ProjectsDirectory+"/"+pname.Text)
 						if err := cmd.Start(); err != nil {
-							log.Fatal(err)
+							log.Printf("Error starting Flax: %v", err)
+							dialog.ShowError(err, app.MainWindow)
+							return
 						}
 						app.MainWindow.Close()
 					} else {
@@ -87,9 +94,17 @@ func (app *Config) CreateProjectsTab() *fyne.Container {
 	openBtn := widget.NewButton("Open Selected Project", func() {
 		//launch the flax engine
 		if selectedItem != nil {
-			cmd := exec.Command(app.Settings.FlaxLocation, " -std -project "+selectedItem.Path)
+			// Check if FlaxLocation is set
+			if app.Settings.FlaxLocation == "" {
+				dialog.ShowInformation("Error", "Flax executable location not set. Please configure it in Settings.", app.MainWindow)
+				return
+			}
+			// Properly split arguments for exec.Command
+			cmd := exec.Command(app.Settings.FlaxLocation, "-std", "-project", selectedItem.Path)
 			if err := cmd.Start(); err != nil {
-				log.Fatal(err)
+				log.Printf("Error starting Flax: %v", err)
+				dialog.ShowError(err, app.MainWindow)
+				return
 			}
 			app.MainWindow.Close()
 		}
