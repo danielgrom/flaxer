@@ -14,17 +14,18 @@ import (
 )
 
 type Config struct {
-	App         fyne.App
-	InfoLog     *log.Logger
-	ErrorLog    *log.Logger
-	MainWindow  fyne.Window
-	SettingsTab *fyne.Container
-	NewsTab     *fyne.Container
-	LearnTab    *fyne.Container
-	ProjectsTab *fyne.Container
-	Settings    *repository.ProjectSettings
-	DB          repository.Repository
-	HTTPClient  *http.Client
+	App             fyne.App
+	InfoLog         *log.Logger
+	ErrorLog        *log.Logger
+	MainWindow      fyne.Window
+	SettingsTab     *fyne.Container
+	NewsTab         *fyne.Container
+	LearnTab        *fyne.Container
+	ProjectsTab     *fyne.Container
+	Settings        *repository.ProjectSettings
+	DB              repository.Repository
+	HTTPClient      *http.Client
+	RefreshProjects func() // Function to refresh projects list
 }
 
 func main() {

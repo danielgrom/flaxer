@@ -82,4 +82,14 @@ func GetSavedFlaxerSettings(app *Config) *repository.FlaxerSettings {
 
 func SaveFlaxerSettings(app *Config, fs *repository.FlaxerSettings) {
 	app.DB.UpdateFlaxerSettings(fs.ID, *fs)
+	
+	// Update the app settings
+	oldProjectsDir := app.Settings.ProjectsDirectory
+	app.Settings.ProjectsDirectory = fs.ProjectsDirectory
+	app.Settings.FlaxLocation = fs.FlaxLocation
+	
+	// If projects directory changed and projects tab exists, refresh it
+	if oldProjectsDir != fs.ProjectsDirectory && app.RefreshProjects != nil {
+		app.RefreshProjects()
+	}
 }

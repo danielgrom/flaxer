@@ -25,6 +25,23 @@ func (app *Config) makeUI() {
 	)
 	s := repository.ProjectSettings{ProjectsDirectory: "", FlaxLocation: ""}
 	var cont *fyne.Container = container.NewStack(nil)
+	
+	// Initialize the RefreshProjects function
+	app.RefreshProjects = func() {
+		// Only refresh if projects tab is currently displayed
+		if app.ProjectsTab != nil && len(cont.Objects) > 0 {
+			// Check if the current tab is the projects tab
+			currentTab := cont.Objects[0]
+			if currentTab == app.ProjectsTab {
+				// Recreate the projects tab
+				app.ProjectsTab.RemoveAll()
+				app.ProjectsTab = nil
+				app.ProjectsTab = app.CreateProjectsTab()
+				cont.Objects = []fyne.CanvasObject{app.ProjectsTab}
+				cont.Refresh()
+			}
+		}
+	}
 	list.Select(0)
 	app.NewsTab = app.CreateNewsTab()
 	cont.Objects = []fyne.CanvasObject{app.NewsTab}
