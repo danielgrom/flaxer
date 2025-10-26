@@ -25,7 +25,7 @@ func (app *Config) makeUI() {
 	)
 	s := repository.ProjectSettings{ProjectsDirectory: "", FlaxLocation: ""}
 	var cont *fyne.Container = container.NewStack(nil)
-	
+
 	// Initialize the RefreshProjects function
 	app.RefreshProjects = func() {
 		// Only refresh if projects tab is currently displayed
